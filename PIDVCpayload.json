@@ -1,0 +1,39 @@
+{
+  "iss": "https://prototype-lomino-issuer.azurewebsites.net/openid/draft_14",
+  "sub": "did:key:z2dmzD81cgPx8Vki7JbuuMmFYrWPgYoytykUZ3eyqht1j9Kbn9SHhSUcbf38uUpyp3Bimz9jL6NQND8VBLh4kCZhtknuKS4bAMDSWnPQGgYJKnFjcyARRLn9p57K3Yv5QVpsiUmzeuhNLFBQN3VYxJHP2B2QvQ9RuUD2GEVHAfqqdRHnfE",
+  "vc": {
+    "type": [
+      "VerifiableCredential",
+      "pid"
+    ],
+    "credentialSubject": {
+      "given_name": "Allslags",
+      "family_name": "Lekeplass",
+      "birth_date": "1992-10-19",
+      "birth_place": "Sverige",
+      "nationality": "SE",
+      "personal_administrative_number": "921019-9320",
+      "id": "did:key:z2dmzD81cgPx8Vki7JbuuMmFYrWPgYoytykUZ3eyqht1j9Kbn9SHhSUcbf38uUpyp3Bimz9jL6NQND8VBLh4kCZhtknuKS4bAMDSWnPQGgYJKnFjcyARRLn9p57K3Yv5QVpsiUmzeuhNLFBQN3VYxJHP2B2QvQ9RuUD2GEVHAfqqdRHnfE"
+    },
+    "id": "urn:uuid:c543963c-f5ad-4d9d-a3fc-4a3c77a9e5f4",
+    "issuer": {
+      "id": "did:web:prototype-lomino-issuer.azurewebsites.net:f700e9e0",
+      "name": "Skatteverket"
+    },
+    "validFrom": "2025-11-07T14:35:29.658169548Z",
+    "validUntil": "2026-02-07T14:35:29.658232648Z",
+    "credentialStatus": {
+      "id": "https://prototype-lomino-issuer.azurewebsites.net/credentials/status/c3337574-bc5b-40a6-98f2-fa62373d0c63",
+      "type": "KantegaStatusListEntry",
+      "statusPurpose": "revocation",
+      "statusListIndex": "c3337574-bc5b-40a6-98f2-fa62373d0c63",
+      "statusListCredential": "https://prototype-lomino-issuer.azurewebsites.net/credentials/status/c3337574-bc5b-40a6-98f2-fa62373d0c63"
+    },
+    "credentialBranding": {
+      "backgroundColor": "#FECC02",
+      "logoUrl": "https://design.bevisstudio.no/api/public/logo/byId/370e8f55-934c-4708-850a-9ebc0bf97e85.jpg"
+    },
+    "name": "Digitalt Identitetskort (se)",
+    "description": "Svensk medborgare"
+  }
+}
