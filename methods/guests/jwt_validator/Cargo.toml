@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 risc0-zkvm = { version = "^3.0.3", default-features = false, features = ['std'] }
+jwt-compact = { version = "0.9.0-beta.1", features = ["p256"] }
+p256 = { version = "0.13", features = ["ecdsa", "serde"] }
