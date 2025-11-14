@@ -1,5 +1,5 @@
 [package]
-name = "method"
+name = "age_over_18"
 version = "0.1.0"
 edition = "2021"
 
