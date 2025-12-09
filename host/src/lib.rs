@@ -1,7 +1,7 @@
 use std::fs;
 
 use chrono::{ NaiveDate, Utc, Datelike };
-use methods::JWT_VALIDATOR_ELF;
+use methods::{ JWT_VALIDATOR_ELF, AGE_OVER_18_ELF };
 use risc0_zkvm::{ ExecutorEnv, Receipt, default_prover };
 use serde_json::Value;
 use anyhow::{ Context, Result };
@@ -46,9 +46,22 @@ pub fn create_zkp_age_over_18(age: &i32) -> Result<Receipt> {
     // let prove_info = prover.prove(env, AGE_OVER_18_ELF).unwrap();
 
     let receipt: Receipt = prover
-        .prove(env, JWT_VALIDATOR_ELF)
+        .prove(env, AGE_OVER_18_ELF)
         .with_context(||
             format!("Guest program failed. There is no valid proof of being over 18.")
+        )?.receipt;
+
+    Ok(receipt)
+}
+
+pub fn create_zkp_jwt_valid(jwt: &str) -> Result<Receipt> {
+    let env = ExecutorEnv::builder().write(&jwt).unwrap().build().unwrap();
+    let prover = default_prover();
+
+    let receipt: Receipt = prover
+        .prove(env, JWT_VALIDATOR_ELF)
+        .with_context(||
+            format!("Guest program failed. There is no valid proof of the signature being valid.")
         )?.receipt;
 
     Ok(receipt)
