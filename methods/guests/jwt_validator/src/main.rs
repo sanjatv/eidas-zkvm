@@ -11,10 +11,19 @@ use p256::elliptic_curve::{
     generic_array::{ GenericArray, typenum::U32, typenum::U64 },
 };
 use serde_json::Value;
+use serde::{ Deserialize, Serialize };
+
+// tells rust to generate code that can serialize this struct into bytes
+#[derive(Deserialize, Serialize)]
+pub struct GuestInput {
+    pub jwt: String,
+}
 
 fn main() {
     // read the input
-    let jwt: String = env::read();
+    let input: GuestInput = env::read();
+
+    let jwt = input.jwt.as_str();
 
     // jwt.split() returns an 'iterator' over the string slices between the dots
     // .collect() takes all those slices and builds a Vec<&str>
