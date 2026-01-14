@@ -10,28 +10,36 @@ use p256::elliptic_curve::{
     sec1::EncodedPoint,
     generic_array::{ GenericArray, typenum::U32, typenum::U64 },
 };
+use serde_json::Value;
+use serde::{ Deserialize, Serialize };
+
+// tells rust to generate code that can serialize this struct into bytes
+#[derive(Deserialize, Serialize)]
+pub struct GuestInput {
+    pub jwt: String,
+}
 
 fn main() {
-    // TODO: Implement your guest code here
-
     // read the input
-    let input: u32 = env::read();
+    let input: GuestInput = env::read();
 
-    let jwk_json: &str =
-        r#"
-            {
-                "kty": "EC",
-                "crv": "P-256",
-                "x": "e71HaZVzVFi1ypluxqzvdrgfWyZ0NSwFYE_0vppUt6I",
-                "y": "YYvY62S0wOSxejfYeTLB6_3Y9J1Xr2PnZ94VUVJsrQc"
-            }
-        "#;
+    let jwt = input.jwt.as_str();
 
-    let jwt: &str =
-        "eyJraWQiOiJReHBOaDQzUzdyZnFtSlZoRG03UzJZT3l2SDBiYjRKdE41UVJ5SkhQcThnIiwidHlwIjoiSldUIiwiYWxnIjoiRVMyNTYiLCJqd2siOnsia3R5IjoiRUMiLCJjcnYiOiJQLTI1NiIsIngiOiJlNzFIYVpWelZGaTF5cGx1eHF6dmRyZ2ZXeVowTlN3RllFXzB2cHBVdDZJIiwieSI6IllZdlk2MlMwd09TeGVqZlllVExCNl8zWTlKMVhyMlBuWjk0VlVWSnNyUWMifX0.eyJpc3MiOiJodHRwczovL3Byb3RvdHlwZS1sb21pbm8taXNzdWVyLmF6dXJld2Vic2l0ZXMubmV0L29wZW5pZC9kcmFmdF8xNCIsInN1YiI6ImRpZDprZXk6ejJkbXpEODFjZ1B4OFZraTdKYnV1TW1GWXJXUGdZb3l0eWtVWjNleXFodDFqOUtibjlTSGhTVWNiZjM4dVVweXAzQmltejlqTDZOUU5EOFZCTGg0a0NaaHRrbnVLUzRiQU1EU1duUFFHZ1lKS25GamN5QVJSTG45cDU3SzNZdjVRVnBzaVVtemV1aE5MRkJRTjNWWXhKSFAyQjJRdlE5UnVVRDJHRVZIQWZxcWRSSG5mRSIsInZjIjp7InR5cGUiOlsiVmVyaWZpYWJsZUNyZWRlbnRpYWwiLCJwaWQiXSwiY3JlZGVudGlhbFN1YmplY3QiOnsiZ2l2ZW5fbmFtZSI6IkFsbHNsYWdzIiwiZmFtaWx5X25hbWUiOiJMZWtlcGxhc3MiLCJiaXJ0aF9kYXRlIjoiMTk5Mi0xMC0xOSIsImJpcnRoX3BsYWNlIjoiU3ZlcmlnZSIsIm5hdGlvbmFsaXR5IjoiU0UiLCJwZXJzb25hbF9hZG1pbmlzdHJhdGl2ZV9udW1iZXIiOiI5MjEwMTktOTMyMCIsImlkIjoiZGlkOmtleTp6MmRtekQ4MWNnUHg4VmtpN0pidXVNbUZZcldQZ1lveXR5a1VaM2V5cWh0MWo5S2JuOVNIaFNVY2JmMzh1VXB5cDNCaW16OWpMNk5RTkQ4VkJMaDRrQ1podGtudUtTNGJBTURTV25QUUdnWUpLbkZqY3lBUlJMbjlwNTdLM1l2NVFWcHNpVW16ZXVoTkxGQlFOM1ZZeEpIUDJCMlF2UTlSdVVEMkdFVkhBZnFxZFJIbmZFIn0sImlkIjoidXJuOnV1aWQ6YzU0Mzk2M2MtZjVhZC00ZDlkLWEzZmMtNGEzYzc3YTllNWY0IiwiaXNzdWVyIjp7ImlkIjoiZGlkOndlYjpwcm90b3R5cGUtbG9taW5vLWlzc3Vlci5henVyZXdlYnNpdGVzLm5ldDpmNzAwZTllMCIsIm5hbWUiOiJTa2F0dGV2ZXJrZXQifSwidmFsaWRGcm9tIjoiMjAyNS0xMS0wN1QxNDozNToyOS42NTgxNjk1NDhaIiwidmFsaWRVbnRpbCI6IjIwMjYtMDItMDdUMTQ6MzU6MjkuNjU4MjMyNjQ4WiIsImNyZWRlbnRpYWxTdGF0dXMiOnsiaWQiOiJodHRwczovL3Byb3RvdHlwZS1sb21pbm8taXNzdWVyLmF6dXJld2Vic2l0ZXMubmV0L2NyZWRlbnRpYWxzL3N0YXR1cy9jMzMzNzU3NC1iYzViLTQwYTYtOThmMi1mYTYyMzczZDBjNjMiLCJ0eXBlIjoiS2FudGVnYVN0YXR1c0xpc3RFbnRyeSIsInN0YXR1c1B1cnBvc2UiOiJyZXZvY2F0aW9uIiwic3RhdHVzTGlzdEluZGV4IjoiYzMzMzc1NzQtYmM1Yi00MGE2LTk4ZjItZmE2MjM3M2QwYzYzIiwic3RhdHVzTGlzdENyZWRlbnRpYWwiOiJodHRwczovL3Byb3RvdHlwZS1sb21pbm8taXNzdWVyLmF6dXJld2Vic2l0ZXMubmV0L2NyZWRlbnRpYWxzL3N0YXR1cy9jMzMzNzU3NC1iYzViLTQwYTYtOThmMi1mYTYyMzczZDBjNjMifSwiY3JlZGVudGlhbEJyYW5kaW5nIjp7ImJhY2tncm91bmRDb2xvciI6IiNGRUNDMDIiLCJsb2dvVXJsIjoiaHR0cHM6Ly9kZXNpZ24uYmV2aXNzdHVkaW8ubm8vYXBpL3B1YmxpYy9sb2dvL2J5SWQvMzcwZThmNTUtOTM0Yy00NzA4LTg1MGEtOWViYzBiZjk3ZTg1LmpwZyJ9LCJuYW1lIjoiRGlnaXRhbHQgSWRlbnRpdGV0c2tvcnQgKHNlKSIsImRlc2NyaXB0aW9uIjoiU3ZlbnNrIG1lZGJvcmdhcmUifX0.3lX3pXwYgQdh9rlXomiWXB4YiDAolrKrj9MN6QY_4pIkA2Jl4mR9CRqnDhRZvw6cSW15LLfn-6ARDe5xXRJArw";
+    // jwt.split() returns an 'iterator' over the string slices between the dots
+    // .collect() takes all those slices and builds a Vec<&str>
+    // iterator is not a list. It's a producer of values. Kalle next() for å generere neste element.
+    let parts: Vec<&str> = jwt.split('.').collect();
 
-    // --- Parse the JWK manually ---
-    let jwk: serde_json::Value = serde_json::from_str(jwk_json).unwrap();
+    let header_b64 = parts[0];
+    // base64-decode header
+    let header_json_bytes = Base64UrlUnpadded::decode_vec(header_b64).expect("invalid b64 header");
+
+    // convert bytes -> str
+    let header_json_str = core::str::from_utf8(&header_json_bytes).expect("header htf8 error");
+
+    // parse header JSON
+    let header: Value = serde_json::from_str(header_json_str).expect("invalid json");
+    let jwk = header["jwk"].clone();
 
     let x_64 = jwk["x"].as_str().unwrap();
     let y_64 = jwk["y"].as_str().unwrap();
@@ -57,19 +65,6 @@ fn main() {
     // https://github.com/RustCrypto/signatures/blob/master/ecdsa/src/verifying.rs
     let verifying_key = VerifyingKey::from_encoded_point(&point).unwrap();
 
-    // ---------------------------------------------
-    // Dropper jwt_compact
-    // Example JWT verification (you can pass it in later)
-    // let jwt = env::read::<String>();
-    // let claims = jwt_compact::Claims::decode_and_verify::<Es256>(&jwt, &verifying_key).unwrap();
-    // env::commit(&claims);
-    // ---------------------------------------------
-
-    // jwt.split() returns an 'iterator' over the string slices between the dots
-    // .collect() takes all those slices and builds a Vec<&str>
-    // iterator is not a list. It's a producer of values. Kalle next() for å generere neste element.
-    let parts: Vec<&str> = jwt.split('.').collect();
-
     // konverter tilbake til string
     let signing_input = format!("{}.{}", parts[0], parts[1]);
     // hent ut signaturen
@@ -81,9 +76,8 @@ fn main() {
     // https://github.com/RustCrypto/signatures/blob/master/ecdsa/src/lib.rs#L229
     let signature = Signature::from_bytes(signature_arr).unwrap();
 
-    verifying_key
-        .verify(signing_input.as_bytes(), &signature)
-        .expect("ECDSA signature verification failed");
+    // burde ikke bruke expect() i guests, bare host
+    let is_valid = verifying_key.verify(signing_input.as_bytes(), &signature).is_ok();
 
     // fn verify(&self, msg: &[u8], signature: &Signature<C>) -> Result<()> {
     //     self.multipart_verify(&[msg], signature)
@@ -100,5 +94,5 @@ fn main() {
 
     // write public output to the journal
 
-    env::commit(&input);
+    env::commit(&is_valid);
 }
