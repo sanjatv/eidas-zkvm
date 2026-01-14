@@ -3,7 +3,8 @@ use anyhow::Result;
 use risc0_zkvm::{ Receipt };
 use host::{ create_zkp_jwt_valid, verify_jwt_signature };
 use serde::{ Deserialize, Serialize };
-use axum::{ routing::post, extract::Json, Router };
+use axum::{ Router, extract::Json, http::{ self, Method }, routing::post };
+use tower_http::cors::{ Any, CorsLayer };
 
 #[derive(Deserialize, Serialize)]
 pub struct ApiVerifyRequest {
@@ -22,10 +23,15 @@ async fn verify_http(Json(req): Json<ApiVerifyRequest>) -> Json<ApiVerifyRespons
 }
 
 pub async fn start_server() {
+    // CORS configuration
+    let cors = CorsLayer::new()
+        .allow_origin("http://localhost:3000".parse::<http::HeaderValue>().unwrap())
+        .allow_methods([Method::POST])
+        .allow_headers(Any);
     // Create a new route 'verify' (post) to the router
     // f.eks. kaller POST http://localhost ../verify kommer til app
     // post(verify_http): denne ruten svarer på post requests. når en post request kommer på /verify, kall verify_http
-    let app = Router::new().route("/verify", post(verify_http));
+    let app = Router::new().route("/verify", post(verify_http)).layer(cors);
 
     // lag TCP server som lytter på en nettverksadresse
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3030").await.unwrap();
