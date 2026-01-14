@@ -1,7 +1,7 @@
 use std::fs;
 
 use chrono::{ NaiveDate, Utc, Datelike };
-use methods::{ JWT_VALIDATOR_ELF, AGE_OVER_18_ELF };
+use methods::{ JWT_VALIDATOR_ELF, JWT_VALIDATOR_ID, AGE_OVER_18_ELF };
 use risc0_zkvm::{ ExecutorEnv, Receipt, default_prover };
 use serde_json::Value;
 use anyhow::{ Context, Result };
@@ -54,7 +54,30 @@ pub fn create_zkp_age_over_18(age: &i32) -> Result<Receipt> {
     Ok(receipt)
 }
 
+pub fn verify_jwt_signature(jwt: &str) -> Result<(bool, Receipt)> {
+    let receipt: Receipt = create_zkp_jwt_valid(jwt)?;
+
+    let is_valid: bool = receipt.journal
+        .decode()
+        .expect("Failed to deserialixe journal input as bool");
+
+    receipt.verify(JWT_VALIDATOR_ID).expect("Proof verification failed");
+
+    Ok((is_valid, receipt))
+}
+
 pub fn create_zkp_jwt_valid(jwt: &str) -> Result<Receipt> {
+    // An executor environment describes the configurations for the zkVM
+    // including program inputs.
+    // A default ExecutorEnv can be created like so:
+    // `let env = ExecutorEnv::builder().build().unwrap();`
+    // However, this `env` does not have any inputs.
+    //
+    // To add guest input to the executor environment, use
+    // ExecutorEnvBuilder::write().
+    // To access this method, you'll need to use ExecutorEnv::builder(), which
+    // creates an ExecutorEnvBuilder. When you're done adding input, call
+    // ExecutorEnvBuilder::build().
     let env = ExecutorEnv::builder().write(&jwt).unwrap().build().unwrap();
     let prover = default_prover();
 

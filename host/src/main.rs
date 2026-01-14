@@ -7,8 +7,7 @@ use methods::{ AGE_OVER_18_ID, JWT_VALIDATOR_ID };
 // Double colons (::) are called path separators. Used to access items (functions, types, constants etc.)
 // inside modules enums or crates.
 
-// For untyped json values.
-// Burde gå over til use serde::{Deserialize, Serialize}; for strongly typed data structures
+mod api; // This makes host/src/api.rs availanle
 
 fn main() -> Result<()> {
     // Initialize tracing. In order to view logs, run `RUST_LOG=info cargo run`
@@ -16,18 +15,6 @@ fn main() -> Result<()> {
         ::fmt()
         .with_env_filter(tracing_subscriber::filter::EnvFilter::from_default_env())
         .init();
-
-    // An executor environment describes the configurations for the zkVM
-    // including program inputs.
-    // A default ExecutorEnv can be created like so:
-    // `let env = ExecutorEnv::builder().build().unwrap();`
-    // However, this `env` does not have any inputs.
-    //
-    // To add guest input to the executor environment, use
-    // ExecutorEnvBuilder::write().
-    // To access this method, you'll need to use ExecutorEnv::builder(), which
-    // creates an ExecutorEnvBuilder. When you're done adding input, call
-    // ExecutorEnvBuilder::build().
 
     let filepath_jwt_payload: &str = "PIDVCpayload.json";
     let age: i32 = get_age_from_jwt(filepath_jwt_payload);
@@ -58,3 +45,13 @@ fn main() -> Result<()> {
 
     Ok(())
 }
+
+// ------- HTTP entry point -------
+
+// Må ha med #[tokio::main] fordi fordi start_server() er async
+// #[tokio::main]
+// async fn main() -> anyhow::Result<()> {
+//     // Start the HTTP server (this never returns until you stop it)
+//     api::start_server().await;
+//     Ok(())
+// }
