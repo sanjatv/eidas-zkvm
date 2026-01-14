@@ -1,7 +1,4 @@
-use methods::{ JWT_VALIDATOR_ID };
-use anyhow::Result;
-use risc0_zkvm::{ Receipt };
-use host::{ create_zkp_jwt_valid, verify_jwt_signature };
+use host::{ verify_jwt_signature };
 use serde::{ Deserialize, Serialize };
 use axum::{ Router, extract::Json, http::{ self, Method }, routing::post };
 use tower_http::cors::{ Any, CorsLayer };
