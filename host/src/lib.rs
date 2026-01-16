@@ -36,8 +36,9 @@ pub fn get_age_from_jwt(filepath: &str) -> i32 {
     age
 }
 
-pub fn create_zkp_age_over_18(age: &i32) -> Result<Receipt> {
-    let env = ExecutorEnv::builder().write(&age).unwrap().build().unwrap();
+pub fn create_zkp_age_over_18(jwt: Stirng, age: &i32) -> Result<Receipt> {
+    let input = (jwt, age);
+    let env = ExecutorEnv::builder().write(&input).unwrap().build().unwrap();
     // Obtain the default prover.
     let prover = default_prover();
 
