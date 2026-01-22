@@ -7,4 +7,4 @@ edition = "2021"
 risc0-build = { version = "^3.0.3" }
 
 [package.metadata.risc0]
-methods = ["guests/guest", "guests/jwt_validator"]
+methods = ["guests/age_over_18"]

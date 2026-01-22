@@ -1,6 +1,13 @@
+#![no_main]
+#![no_std]
+
+extern crate alloc;
+
+use alloc::string::String;
+use alloc::vec::Vec;
+use alloc::format;
+
 use risc0_zkvm::guest::env;
-// use jwt_compact::alg::Es256;
-// use jwt_compact::prelude::*;
 use base64ct::{ Base64UrlUnpadded, Encoding };
 use p256::ecdsa::VerifyingKey;
 use p256::ecdsa::Signature;
@@ -19,7 +26,7 @@ pub struct GuestInput {
     pub jwt: String,
 }
 
-fn main() {
+pub fn main() {
     // read the input
     let input: GuestInput = env::read();
 
@@ -86,13 +93,6 @@ fn main() {
     // signing_input er header og payload, altså msg: &[u8] som betyr at vi må konvertere header og payload
     // til bytes array
     // public_key.verify(signing_input.as_bytes(), &signature).is_ok()
-
-    println!("POINT {}", point);
-    println!("VERIFYING KEY {:?}", verifying_key);
-    println!("SIGNATURE {:?}", signature);
-    // TODO: do something with the input
-
-    // write public output to the journal
 
     env::commit(&is_valid);
 }

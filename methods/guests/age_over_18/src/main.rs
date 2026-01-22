@@ -4,9 +4,13 @@
 // The guest code should be as lightweight as possible for performance reasons. So since we’re not using std, we exclude it.
 #![no_std]
 
+extern crate alloc;
+
+use alloc::string::String;
+use alloc::vec::Vec;
+use alloc::format;
+
 use risc0_zkvm::guest::env;
-// use jwt_compact::alg::Es256;
-// use jwt_compact::prelude::*;
 use base64ct::{ Base64UrlUnpadded, Encoding };
 use p256::ecdsa::VerifyingKey;
 use p256::ecdsa::Signature;
@@ -23,9 +27,7 @@ use serde::{ Deserialize, Serialize };
 // starts executing this guest code. This is a macro to indicate the initial guest function to call, which in this case is ‘main’.
 risc0_zkvm::guest::entry!(main);
 
-fn verify_es256_signature(input: String) -> bool {
-    let jwt = input.jwt.as_str();
-
+fn verify_es256_signature(jwt: &str) -> bool {
     // jwt.split() returns an 'iterator' over the string slices between the dots
     // .collect() takes all those slices and builds a Vec<&str>
     // iterator is not a list. It's a producer of values. Kalle next() for å generere neste element.
