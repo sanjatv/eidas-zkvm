@@ -1,7 +1,7 @@
-use host::{ verify_jwt_signature };
+use host::{ create_zkp_age_over_18, verify_age_over_18 };
+use risc0_zkvm::Receipt;
 use serde::{ Deserialize, Serialize };
 use axum::{ Router, extract::Json, http::{ self, Method }, routing::post };
-use tower_http::cors::{ Any, CorsLayer };
 
 #[derive(Deserialize, Serialize)]
 pub struct ApiVerifyRequest {
@@ -14,8 +14,9 @@ pub struct ApiVerifyResponse {
     // pub receipt: Receipt,
 }
 
-async fn verify_http(Json(req): Json<ApiVerifyRequest>) -> Json<ApiVerifyResponse> {
-    let (is_valid, _) = verify_jwt_signature(&req.jwt).unwrap();
+async fn http_verify_age_over_18(Json(req): Json<ApiVerifyRequest>) -> Json<ApiVerifyResponse> {
+    let receipt: Receipt = create_zkp_age_over_18(&req.jwt).unwrap();
+    let (is_valid, _) = verify_age_over_18(receipt).unwrap();
     Json(ApiVerifyResponse { is_valid })
 }
 
@@ -23,7 +24,7 @@ pub async fn start_server() {
     // Create a new route 'verify' (post) to the router
     // f.eks. kaller POST http://localhost ../verify kommer til app
     // post(verify_http): denne ruten svarer på post requests. når en post request kommer på /verify, kall verify_http
-    let app = Router::new().route("/verify", post(verify_http));
+    let app = Router::new().route("/verify", post(http_verify_age_over_18));
 
     // lag TCP server som lytter på en nettverksadresse
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3030").await.unwrap();

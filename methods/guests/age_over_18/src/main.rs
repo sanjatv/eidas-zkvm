@@ -1,4 +1,7 @@
+// The guest code is never launched as a standalone Rust executable, so we specify #![no_main]
 #![no_main]
+
+// The guest code should be as lightweight as possible for performance reasons. So since we’re not using std, we exclude it.
 #![no_std]
 
 extern crate alloc;
@@ -20,18 +23,11 @@ use p256::elliptic_curve::{
 use serde_json::Value;
 use serde::{ Deserialize, Serialize };
 
-// tells rust to generate code that can serialize this struct into bytes
-#[derive(Deserialize, Serialize)]
-pub struct GuestInput {
-    pub jwt: String,
-}
+// We must make the guest code available for the host to launch, and to do that we must specify which function to call when the host
+// starts executing this guest code. This is a macro to indicate the initial guest function to call, which in this case is ‘main’.
+risc0_zkvm::guest::entry!(main);
 
-pub fn main() {
-    // read the input
-    let input: GuestInput = env::read();
-
-    let jwt = input.jwt.as_str();
-
+fn verify_es256_signature(jwt: &str) -> bool {
     // jwt.split() returns an 'iterator' over the string slices between the dots
     // .collect() takes all those slices and builds a Vec<&str>
     // iterator is not a list. It's a producer of values. Kalle next() for å generere neste element.
@@ -86,13 +82,22 @@ pub fn main() {
     // burde ikke bruke expect() i guests, bare host
     let is_valid = verifying_key.verify(signing_input.as_bytes(), &signature).is_ok();
 
-    // fn verify(&self, msg: &[u8], signature: &Signature<C>) -> Result<()> {
-    //     self.multipart_verify(&[msg], signature)
-    // }
+    return is_valid;
+}
 
-    // signing_input er header og payload, altså msg: &[u8] som betyr at vi må konvertere header og payload
-    // til bytes array
-    // public_key.verify(signing_input.as_bytes(), &signature).is_ok()
+pub fn main() {
+    // Load the first number from the host
+    let (jwt, age): (String, i32) = env::read();
 
+    // Validate signature
+    assert!(verify_es256_signature(&jwt), "Invalid signature");
+
+    // Logic circuit for age over 18
+    let is_valid = &(age >= 18);
+    // ! after a function name means it is a macro, not a regular function (sikkert fordi Rust er funksjonelt språk)
+    assert!(is_valid, "User is underage");
+
+    // write public output to the journal
+    // & is reference operator. &age creates a reference (pointer) to the variable age, rather than the value itself
     env::commit(&is_valid);
 }
