@@ -6,7 +6,7 @@ use chrono::{ NaiveDate, Utc, Datelike };
 use methods::{ AGE_OVER_18_ELF, AGE_OVER_18_ID };
 use risc0_zkvm::{ ExecutorEnv, Receipt, default_prover };
 use serde_json::Value;
-use anyhow::{ Context, Result };
+use anyhow::{ Result };
 use base64ct::{ Base64UrlUnpadded, Encoding };
 
 pub fn from_file_to_json(filepath: &str) -> Value {
@@ -47,7 +47,7 @@ pub fn get_age_from_jwt(jwt: &str) -> i32 {
 pub fn create_zkp_age_over_18(jwt: &str) -> Result<Receipt> {
     let age = get_age_from_jwt(jwt);
     let input = (jwt, age);
-    let env = ExecutorEnv::builder().write(&input).unwrap().build().unwrap();
+    let env = ExecutorEnv::builder().write(&input)?.build()?;
     // Obtain the default prover.
     let prover = default_prover();
 
@@ -56,11 +56,7 @@ pub fn create_zkp_age_over_18(jwt: &str) -> Result<Receipt> {
     // let prove_info = prover.prove(env, AGE_OVER_18_ELF).unwrap();
 
     // ? is “early return on error”, so it only works in functions that can early-return an error (Result, Option, ...)
-    let receipt: Receipt = prover
-        .prove(env, AGE_OVER_18_ELF)
-        .with_context(||
-            format!("Guest program failed. There is no valid proof of being over 18.")
-        )?.receipt;
+    let receipt = prover.prove(env, AGE_OVER_18_ELF)?.receipt;
 
     Ok(receipt)
 }
