@@ -61,6 +61,12 @@ pub fn create_zkp_age_over_18(jwt: &str) -> Result<Receipt> {
     Ok(receipt)
 }
 
+pub fn b64_encode_receipt(receipt: Receipt) -> String {
+    let receipt_bytes = serde_json::to_vec(&receipt).unwrap();
+
+    Base64UrlUnpadded::encode_string(&receipt_bytes)
+}
+
 pub fn verify_age_over_18(receipt: Receipt) -> Result<(bool, Receipt)> {
     let is_valid: bool = receipt.journal
         .decode()
