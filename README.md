@@ -19,11 +19,12 @@ or with dev mode explicitly disabled:
 ## Dev mode
 
 Run with dev mode enabled (faster proving/debugging). WARNING: Proving in dev mode does not generate a valid receipt. Receipts generated from this process are invalid and should never be used in production.
-`RISC0_DEV_MODE=1 cargo run --release`
+`RISC0_DEV_MODE=1 cargo run --release -- dev`
 
 ## HTTP API mode
 
-In HTTP mode, the host runs as a web server so external clients can call it. To run the API you have to comment out the first `main()` function in `host/src/main.rs` and uncomment the async `main()` function.
+In HTTP mode, the host runs as a web server so external clients can call it. To run the API you have to run
+`RISC0_DEV_MODE=1 cargo run --release`
 
 To test the API endpoint with curl you can run this in your terminal:
 
