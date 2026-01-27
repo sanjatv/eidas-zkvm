@@ -19,6 +19,9 @@ or with dev mode explicitly disabled:
 ## Dev mode
 
 Run with dev mode enabled (faster proving/debugging). WARNING: Proving in dev mode does not generate a valid receipt. Receipts generated from this process are invalid and should never be used in production.
+`RISC0_DEV_MODE=1 cargo run --release`
+
+If you want to run dev mode without api run
 `RISC0_DEV_MODE=1 cargo run --release -- dev`
 
 ## HTTP API mode
