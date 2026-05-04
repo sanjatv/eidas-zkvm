@@ -6,10 +6,13 @@ edition = "2021"
 [workspace]
 
 [dependencies]
-risc0-zkvm = { version = "3.0.3", default-features = false } # no "std" in guest
-p256 = { version = "0.13", default-features = false, features = ["ecdsa", "serde"] }
-
+risc0-zkvm = { version = "3.0.3", default-features = false, features = ["std"] } # no "std" in guest
+p256 = { version = "0.13.2", default-features = false, features = ["ecdsa", "serde", "std", "expose-field"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
-
 base64ct = {version = "1.8.0", default-features = false, features = ["alloc"] }
+
+[patch.crates-io]
+p256 = { git = "https://github.com/risc0/RustCrypto-elliptic-curves", tag = "p256/v0.13.2-risczero.1" }
+crypto-bigint = { git = "https://github.com/risc0/RustCrypto-crypto-bigint", tag = "v0.5.5-risczero.0" }
+sha2 = { git = "https://github.com/risc0/RustCrypto-hashes", tag = "sha2-v0.10.8-risczero.0" }

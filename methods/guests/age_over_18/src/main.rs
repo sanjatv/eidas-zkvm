@@ -1,15 +1,6 @@
 // The guest code is never launched as a standalone Rust executable, so we specify #![no_main]
 #![no_main]
 
-// The guest code should be as lightweight as possible for performance reasons. So since we’re not using std, we exclude it.
-#![no_std]
-
-extern crate alloc;
-
-use alloc::string::String;
-use alloc::vec::Vec;
-use alloc::format;
-
 use risc0_zkvm::guest::env;
 use base64ct::{ Base64UrlUnpadded, Encoding };
 use p256::ecdsa::VerifyingKey;
