@@ -1,4 +1,4 @@
-use host::{ create_zkp_age_over_18, verify_age_over_18, b64_encode_receipt };
+use host::{ create_zkp_age_over_18, b64_encode_receipt };
 use risc0_zkvm::Receipt;
 use serde::{ Deserialize, Serialize };
 use axum::{ Router, extract::Json, http::{ self, Method }, routing::post };

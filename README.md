@@ -10,24 +10,37 @@ This application contains multiple guest programs that the zkVM can run and gene
 
 The JWT validator guest is a guest program that validates the signature on the signed JSON web token (JWT) to ensure its integrity.
 
-# Run
+## Running
 
-`cargo run --release`
-or with dev mode explicitly disabled:
-`RISC0_DEV_MODE=0 cargo run --release`
+There are two independent options when running the host:
 
-## Dev mode
+**`RISC0_DEV_MODE`** controls how the zkVM generates proofs. In normal mode (`RISC0_DEV_MODE=0`, the default), the zkVM produces real cryptographic proofs. This is slow but generates valid receipts suitable for production. In dev mode (`RISC0_DEV_MODE=1`), proving is skipped and replaced with a fast mock, which is useful during development but produces invalid receipts that must never be used in production.
 
-Run with dev mode enabled (faster proving/debugging). WARNING: Proving in dev mode does not generate a valid receipt. Receipts generated from this process are invalid and should never be used in production.
-`RISC0_DEV_MODE=1 cargo run --release`
+**`serve`** controls whether the host starts an HTTP API server. Without it, the host runs the proof pipeline directly and exits. With `-- serve`, it starts a web server on `localhost:3030` so external clients can submit verification requests.
 
-If you want to run dev mode without api run
-`RISC0_DEV_MODE=1 cargo run --release -- dev`
+### Options
 
-## HTTP API mode
+Run with real proofs, no server:
+```
+cargo run --release
+```
 
-In HTTP mode, the host runs as a web server so external clients can call it. To run the API you have to run
-`RISC0_DEV_MODE=1 cargo run --release`
+Run with real proofs, with API server:
+```
+cargo run --release -- serve
+```
+
+Run with dev mode (fast, no valid proofs), no server:
+```
+RISC0_DEV_MODE=1 cargo run --release
+```
+
+Run with dev mode, with API server:
+```
+RISC0_DEV_MODE=1 cargo run --release -- serve
+```
+
+### Testing the API
 
 To test the API endpoint with curl you can run this in your terminal:
 

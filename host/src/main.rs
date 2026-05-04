@@ -1,7 +1,7 @@
 use std::fs;
 use std::env;
 use anyhow::Result;
-use host::{ b64_encode_receipt, create_zkp_age_over_18, verify_age_over_18 };
+use host::{ b64_encode_receipt, create_zkp_age_over_18 };
 use risc0_zkvm::Receipt;
 
 // Double colons (::) are called path separators. Used to access items (functions, types, constants etc.)
@@ -11,14 +11,14 @@ mod api; // This makes host/src/api.rs available
 fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
 
-    if args.len() > 1 && args[1] == "dev" {
-        run_dev()
+    if args.len() > 1 && args[1] == "serve" {
+        run_serve()
     } else {
-        run_main()
+        run_prove()
     }
 }
 
-fn run_dev() -> Result<()> {
+fn run_prove() -> Result<()> {
     // Initialize tracing. In order to view logs, run `RUST_LOG=info cargo run`
     tracing_subscriber
         ::fmt()
@@ -45,7 +45,7 @@ fn run_dev() -> Result<()> {
 
 // Må ha med #[tokio::main] fordi fordi start_server() er async
 #[tokio::main]
-async fn run_main() -> anyhow::Result<()> {
+async fn run_serve() -> anyhow::Result<()> {
     // Start the HTTP server (this never returns until you stop it)
     api::start_server().await;
     Ok(())
