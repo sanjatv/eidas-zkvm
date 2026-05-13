@@ -14,7 +14,7 @@ pub struct ApiVerifyResponse {
     pub b64_receipt: String,
 }
 
-async fn http_verify_age_over_18(Json(req): Json<ApiVerifyRequest>) -> Json<ApiVerifyResponse> {
+async fn http_create_zkp_age_over_18(Json(req): Json<ApiVerifyRequest>) -> Json<ApiVerifyResponse> {
     let receipt: Receipt = create_zkp_age_over_18(&req.jwt).unwrap();
     let b64_receipt: String = b64_encode_receipt(receipt);
 
@@ -28,10 +28,10 @@ pub async fn start_server() {
         .allow_methods([Method::POST])
         .allow_headers(Any);
 
-    // Create a new route 'verify' (post) to the router
-    // f.eks. kaller POST http://localhost ../verify kommer til app
-    // post(verify_http): denne ruten svarer på post requests. når en post request kommer på /verify, kall verify_http
-    let app = Router::new().route("/verify", post(http_verify_age_over_18)).layer(cors);
+    // Create a new route 'prove' (post) to the router
+    // f.eks. kaller POST http://localhost ../prove kommer til app
+    // post(http_create_zkp_age_over_18): denne ruten svarer på post requests. når en post request kommer på /prove, kall http_create_zkp_age_over_18
+    let app = Router::new().route("/prove", post(http_create_zkp_age_over_18)).layer(cors);
 
     // lag TCP server som lytter på en nettverksadresse
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3030").await.unwrap();
